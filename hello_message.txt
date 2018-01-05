@@ -1,0 +1,9 @@
+Sharing code is a good thing, and it should be really easy to do it.
+A lot of times, I want to show you something I'm seeing - and that's where we use pastebins.
+
+Haste is the prettiest, easiest to use pastebin ever made.
+
+*Info*
+Pastes will stay for 30 days from their last view.  They may be removed earlierand without notice.
+
+*Send me a file with your code, and I'll upload it.*
