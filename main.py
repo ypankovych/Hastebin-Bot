@@ -12,14 +12,17 @@ def start(message):
 
 @bot.message_handler(content_types=['document'])
 def documents_handler(message):
-    file_info = bot.get_file(message.document.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    paste_link = paste(paste_content=downloaded_file)
-    if paste_link:
-        bot.send_message(chat_id=message.chat.id, text=f'https://hastebin.com/{paste_link}', parse_mode='HTML')
-        botan.track(os.environ.get('botan_key'), message.chat.id, message, 'New paste created.')
+    if message.document.mime_type.split('/')[0] == 'text':
+        file_info = bot.get_file(message.document.file_id)
+        downloaded_file = bot.download_file(file_info.file_path).decode('windows-1251').encode('utf8')
+        paste_link = paste(paste_content=downloaded_file)
+        if isinstance(paste_link, dict):
+            bot.reply_to(message=message, text=f'https://hastebin.com/{paste_link["key"]}', parse_mode='HTML')
+            botan.track(os.environ.get('botan_key'), message.chat.id, message, 'New paste created.')
+        else:
+            bot.send_message(chat_id=message.chat.id, text=f'`Error: {paste_link}`', parse_mode='Markdown')
     else:
-        bot.send_message(chat_id=message.chat.id, text='`Error: Invalid file format`', parse_mode='Markdown')
+        bot.send_message(chat_id=message.chat.id, text='`Error: incorrect file type.`', parse_mode='Markdown')
 
 if __name__ == '__main__':
     bot.polling(none_stop=True, interval=0)
