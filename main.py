@@ -1,5 +1,6 @@
 import os
 import botan
+import chardet
 import telebot
 from hastebin import paste
 
@@ -14,8 +15,8 @@ def start(message):
 def documents_handler(message):
     if message.document.mime_type.split('/')[0] == 'text':
         file_info = bot.get_file(message.document.file_id)
-        downloaded_file = bot.download_file(file_info.file_path).decode('windows-1251').encode('utf8')
-        paste_link = paste(paste_content=downloaded_file)
+        downloaded_file = bot.download_file(file_info.file_path)
+        paste_link = paste(paste_content=downloaded_file.decode(chardet.detect(downloaded_file)['encoding']).encode('utf8'))
         if isinstance(paste_link, dict):
             bot.reply_to(message=message, text=f'https://hastebin.com/{paste_link["key"]}', parse_mode='HTML')
             botan.track(os.environ.get('botan_key'), message.chat.id, message, 'New paste created.')
