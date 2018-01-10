@@ -14,17 +14,14 @@ def start(message):
 
 @bot.message_handler(content_types=['document'])
 def documents_handler(message):
-    if message.document.mime_type.split('/')[0] == 'text':
-        file_info = bot.get_file(message.document.file_id)
-        downloaded_file = bot.download_file(file_info.file_path)
-        result = validate_file_content(downloaded_file)
-        if result['status']:
-            bot.reply_to(message=message, text=f'https://hastebin.com/{result["result"]}', parse_mode='HTML')
-            botan.track(os.environ.get('botan_key'), message.chat.id, message, 'New paste created.')
-        else:
-            bot.send_message(chat_id=message.chat.id, text=f'`Error: {result["message"]}`', parse_mode='Markdown')
+    file_info = bot.get_file(message.document.file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    result = validate_file_content(downloaded_file)
+    if result['status']:
+        bot.reply_to(message=message, text=f'https://hastebin.com/{result["result"]}', parse_mode='HTML')
+        botan.track(os.environ.get('botan_key'), message.chat.id, message, 'New paste created.')
     else:
-        bot.send_message(chat_id=message.chat.id, text='`This file type is not supported.`', parse_mode='Markdown')
+        bot.send_message(chat_id=message.chat.id, text=f'`Error: {result["message"]}`', parse_mode='Markdown')
 
 @bot.message_handler()
 def info(message):
@@ -40,4 +37,4 @@ def validate_file_content(file_object):
     return {'status': 0, 'message': paste_result}
 
 if __name__ == '__main__':
-    bot.polling(none_stop=True, interval=0)
+    bot.polling(none_stop=True, interval=0, timeout=1000)
