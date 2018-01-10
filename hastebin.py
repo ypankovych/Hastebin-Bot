@@ -7,8 +7,8 @@ def paste(paste_content):
     try:
         response = requests.post(new_paste_url, data=paste_content, timeout=1000).json()
     except json.decoder.JSONDecodeError:
-        return 'Application Error'
+        return {'status': 0, 'message': 'Application Error'}
     if response.get('key'):
-        return response
+        return {'status': 1, 'result': response['key']}
     else:
-        return response['message']
+        return {'status': 0, 'message': response['message']}

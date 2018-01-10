@@ -21,7 +21,7 @@ def documents_handler(message):
         bot.reply_to(message=message, text=f'https://hastebin.com/{result["result"]}', parse_mode='HTML')
         botan.track(os.environ.get('botan_key'), message.chat.id, message, 'New paste created.')
     else:
-        bot.send_message(chat_id=message.chat.id, text=f'`Error: {result["message"]}`', parse_mode='Markdown')
+        bot.reply_to(message, text=f'`Error: {result["message"]}`', parse_mode='Markdown')
 
 @bot.message_handler()
 def info(message):
@@ -32,9 +32,7 @@ def validate_file_content(file_object):
     if not file_encoding:
         return {'status': 0, 'message': 'incorrect file type.'}
     paste_result = paste(paste_content=file_object.decode(file_encoding).encode('utf8'))
-    if isinstance(paste_result, dict):
-        return {'status': 1, 'result': paste_result['key']}
-    return {'status': 0, 'message': paste_result}
+    return paste_result
 
 if __name__ == '__main__':
     bot.polling(none_stop=True, interval=0, timeout=1000)
